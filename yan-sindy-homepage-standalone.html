@@ -2779,5 +2779,44 @@ anchor OK: css .sv-wrap track anchor OK: js pageLabel helper anchor OK: js badge
     form.addEventListener('submit', function(e){ e.preventDefault(); ask(input.value); });
   })();
 </script>
+<!-- Supabase 表单提交模块 -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// 替换成你自己的 Supabase 项目地址和 anon key
+const supabaseUrl = "https://keqiguxullmbowpgzyji.supabase.co";
+const supabaseKey = "sb_publishable_h85zLbUNQv_DSMBQx9JirA_QP-lwUwA";
+const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.querySelector("form");
+  if(!form) return;
+  form.addEventListener("submit", async function(e){
+    e.preventDefault();
+    const name = form.querySelector('input[name="name"]').value.trim();
+    const email = form.querySelector('input[name="email"]').value.trim();
+    const message = form.querySelector('textarea[name="message"]').value.trim();
+
+    if(!name || !email || !message){
+      alert("请填写全部字段");
+      return;
+    }
+    try {
+      const {data, error} = await supabase
+        .from('feedback')
+        .insert([{name, email, message}]);
+      if(error){
+        alert("提交失败：" + error.message);
+        console.error(error);
+      }else{
+        alert("✅提交成功！");
+        form.reset();
+      }
+    } catch(err){
+      alert("异常：" + err.message);
+      console.error(err);
+    }
+  })
+})
+</script>
 </body>
 </html>
